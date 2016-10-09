@@ -62,8 +62,8 @@ exports.rollDice = function(dice){
 
 exports.playRPS = function(action){
 	if (strings.rps.indexOf(action) != -1){
-		let compAction = Math.floor((Math.random() * (strings.rps.length - 1)));
-		var result = ((compAction - strings.rps.indexOf(action)) % 3);
+		var compAction = Math.floor((Math.random() * (strings.rps.length)));
+		var result = ((compAction + 3 - strings.rps.indexOf(action)) % 3);
 		switch (result){
 			case 0:
 				return "I played " + strings.rps[compAction] + "\nIt's a tie!";
@@ -73,5 +73,7 @@ exports.playRPS = function(action){
 				return "I played " + strings.rps[compAction] + "\nYou win!";
 		}
 	}
+	console.log(result);
+	console.log(compAction);
 	return "Play properly!";
 }
