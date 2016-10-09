@@ -1,48 +1,17 @@
 const fs = require('fs');
-const library = require("./library.json");
-
-const rps = ["rock", "paper", "scissors"];
-
-const emoteList = {
-	"acknowledge" : "Understood",
-	"group" : "Group up with me!",
-	"healing" : "I need healing!",
-	"ultimate" : "My ultimate is ready! Let's do this!",
-	"hello" : "Hello!",
-	"thank" : "Thank you!"
-}
-
-const eightList = ["It is certain", "It is decidedly so",
-	"Without a doubt",
-	"Yes, definitely",
-	"You may rely on it",
-	"As I see it, yes",
-	"Most likely",
-	"Outlook good",
-	"Yes",
-	"Signs point to yes",
-	"Reply hazy try again",
-	"Ask again later",
-	"Better not tell you now",
-	"Cannot predict now",
-	"Concentrate and ask again",
-	"Don't count on it",
-	"My reply is no",
-	"My sources say no",
-	"Outlook not so good",
-	"Very doubtful"
-]
+const library = require("./strings/library.json");
+const strings = require("./strings/strings.js");
 
 exports.emote = function(user, action, target){
 	let text = "";
 	if (action == undefined){
 		text = user + " tried to do nothing. Absolutely nothing.";
 	} else if (target == undefined){
-		text = user + ": " + emoteList[action];
-	} else if (!emoteList[action]){
+		text = user + ": " + strings.emoteList[action];
+	} else if (!strings.emoteList[action]){
 		text = user + " tried to do " + action + ", whatever that is.";
 	} else {
-		text = user + " to " + target + " : " + emoteList[action];
+		text = user + " to " + target + " : " + strings.emoteList[action];
 	}
 	return text;
 }
@@ -64,20 +33,17 @@ exports.teach = function(action, result){
 }
 
 exports.unlearn = function(action){
-	let index = library.indexOf(action);
-	if (msg.author.id == dva && index != 1){
-		library.splice(index,1);
+	if (action in library){
+		delete library[action];
 		fs.writeFile('./library.json', JSON.stringify(library));
 		return "Successfully forgot about... something!";
-	} else if(index == -1){
-		return "I do not know this.";
 	}
-	return "You do not have permission to do this!";	
+	return "I do not know this.";
 }
 
 exports.eightBall = function(){
-	let randomNum = Math.floor((Math.random() * (eightList.length - 1)));
-	return eightList[randomNum];
+	let randomNum = Math.floor((Math.random() * (strings.eightList.length - 1)));
+	return strings.eightList[randomNum];
 }
 
 exports.rollDice = function(dice){
@@ -92,4 +58,20 @@ exports.rollDice = function(dice){
 		return sum;
 	}
 	return "Not a valid roll";
+}
+
+exports.playRPS = function(action){
+	if (strings.rps.indexOf(action) != -1){
+		let compAction = Math.floor((Math.random() * (strings.rps.length - 1)));
+		var result = ((compAction - strings.rps.indexOf(action)) % 3);
+		switch (result){
+			case 0:
+				return "I played " + strings.rps[compAction] + "\nIt's a tie!";
+			case 1:
+				return "I played " + strings.rps[compAction] + "\nI win!";
+			case 2:
+				return "I played " + strings.rps[compAction] + "\nYou win!";
+		}
+	}
+	return "Play properly!";
 }

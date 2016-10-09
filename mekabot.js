@@ -1,6 +1,6 @@
 const Discord = require("discord.js");
 const bot = new Discord.Client();
-const tokens = require("./tokens.json");
+const tokens = require("./strings/tokens.json");
 const commands = require("./commands.js");
 
 var commandList = ["!8ball <question>", "!emote <emote> <name>", "!emoteList", "!help", "!r or !roll", "!say <command>", "!teach <command> <result>", "!voiceLine"]
@@ -182,12 +182,14 @@ function commandHelper(msg){
 		if (msg.guild){
 			msg.channel.sendMessage(commands.teach(msgWords[1], msgWords.slice(2).join(" ")));
 		}
-	} else if (msgWords[0] == (tokens.prefix + "unlearn")){
+	} else if (msgWords[0] == (tokens.prefix + "unlearn") && msg.author.id == tokens.dva){
 		msg.channel.sendMessage(commands.unlearn(msgWords[1]));
 	} else if (msgWords[0] == (tokens.prefix + "8ball")){
 		msg.channel.sendMessage(commands.eightBall());
 	} else if ((msgWords[0] == (tokens.prefix + "r")) || (msgWords[0] == (tokens.prefix + "roll"))){
 		msg.channel.sendMessage(commands.rollDice(msgWords[1]));
+	} else if (msgWords[0] == (tokens.prefix + "rps")){
+		msg.channel.sendMessage(commands.playRPS(msgWords[1].toLowerCase()));
 	} else {
 		msg.author.sendMessage("That is not a valid command! Type !help for a list of commands.")
 		msg.delete();
