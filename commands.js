@@ -16,6 +16,14 @@ exports.emote = function(user, action, target){
 	return text;
 }
 
+exports.emoteList = function(){
+	let text = "";
+	for (let emote in strings.emoteList){
+		text = text + emote + ", ";
+	}
+	return text.slice(0,text.length - 2);
+}
+
 exports.say = function(action){
 	if (library[action]){
 		return library[action];
@@ -24,7 +32,9 @@ exports.say = function(action){
 }
 
 exports.teach = function(action, result){
-	if (library[action] == undefined){
+	if (action === undefined || result.length == 0){
+		return "Stop teaching me silly things!";
+	} else if (library[action] == undefined){
 		library[action] = result;
 		fs.writeFile('./library.json', JSON.stringify(library));
 		return ("Successfully learned " + action);
@@ -35,7 +45,7 @@ exports.teach = function(action, result){
 exports.unlearn = function(action){
 	if (action in library){
 		delete library[action];
-		fs.writeFile('./library.json', JSON.stringify(library));
+		fs.writeFile('.strings/library.json', JSON.stringify(library));
 		return "Successfully forgot about... something!";
 	}
 	return "I do not know this.";
@@ -47,10 +57,12 @@ exports.eightBall = function(){
 }
 
 exports.rollDice = function(dice){
-	if (dice.search(/\d*[d]\d+/) != -1){
+	if (dice == undefined){
+		return "Not a valid roll";
+	} else 	if (dice.search(/\d*[d]\d+/) != -1){
 		let sum = 0;
 		let values = dice.split(/[dD]/);
-		let diceAmount = parseInt(values[0]);
+		let diceAmount = parseInt(values[0]) || 1;
 		let diceSize = Math.floor(parseInt(values[1]));
 		for (i = 0; i < diceAmount; i++){
 			sum += Math.floor((Math.random() * (diceSize) + 1));
@@ -61,7 +73,10 @@ exports.rollDice = function(dice){
 }
 
 exports.playRPS = function(action){
-	if (strings.rps.indexOf(action) != -1){
+	if (action == undefined){
+		return "Play properly!";
+	} else if (strings.rps.indexOf(action) != -1){
+		action = action.toLowerCase();
 		var compAction = Math.floor((Math.random() * (strings.rps.length)));
 		var result = ((compAction + 3 - strings.rps.indexOf(action)) % 3);
 		switch (result){
@@ -73,7 +88,5 @@ exports.playRPS = function(action){
 				return "I played " + strings.rps[compAction] + "\nYou win!";
 		}
 	}
-	console.log(result);
-	console.log(compAction);
 	return "Play properly!";
 }

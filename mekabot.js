@@ -7,7 +7,8 @@ var commandList = ["!8ball <question>", "!emote <emote> <name>", "!emoteList", "
 
 var replyList = {
 	"ayy" : "lmao",
-	"sorry" : "not sorry"
+	"sorry" : "not sorry",
+	"sup" : "sup"
 }
 
 var voiceLine = ["Is this ez mode?", "LOL", "Time to raise my APM!", "Nerf this!", "Bunny Hop", "I play to win!", 
@@ -167,11 +168,7 @@ function commandHelper(msg){
 		var randomNum = Math.floor((Math.random() * (voiceLine.length - 1)));
 		msg.channel.sendMessage(voiceLine[randomNum]);
 	} else if (msg.content.startsWith(tokens.prefix + "emoteList")){
-		var text = "";
-		for (var emote in emoteList){
-			text = text + emote + ", ";
-		}
-		msg.channel.sendMessage(text.slice(0,text.length - 2));
+		msg.channel.sendMessage(commands.emoteList());
 	} else if (msgWords[0] == (tokens.prefix + "emote")){
 		msg.channel.sendMessage(commands.emote(msg.author.username,msgWords[1],msgWords[2]));
 	} else if (msgWords[0] == (tokens.prefix + "hangman")){
@@ -189,7 +186,7 @@ function commandHelper(msg){
 	} else if ((msgWords[0] == (tokens.prefix + "r")) || (msgWords[0] == (tokens.prefix + "roll"))){
 		msg.channel.sendMessage(commands.rollDice(msgWords[1]));
 	} else if (msgWords[0] == (tokens.prefix + "rps")){
-		msg.channel.sendMessage(commands.playRPS(msgWords[1].toLowerCase()));
+		msg.channel.sendMessage(commands.playRPS(msgWords[1]));
 	} else {
 		msg.author.sendMessage("That is not a valid command! Type !help for a list of commands.")
 		msg.delete();
@@ -197,20 +194,20 @@ function commandHelper(msg){
 }
 
 bot.on("message", msg => {
-    if (msg.content.startsWith(tokens.prefix) && !msg.author.bot) {
+	if (msg.author.bot){
+		return;
+    } else if (msg.content.startsWith(tokens.prefix)) {
     	commandHelper(msg);
-    } else if(replyList[msg.content]) {
+    } else if(replyList[msg.content] && !msg.author.bot) {
     	msg.channel.sendMessage(replyList[msg.content]);
-  	} else if((msg.content.match("gg ez") || msg.content.match(":ez:")) && !msg.author.bot && msg.guild){
+  	} else if((msg.content.match("gg ez") || msg.content.match(":ez:")) && msg.guild){
   		// Check for bm nickname
   		let name = msg.member.nickname || msg.author.username;
 		msg.channel.sendMessage(name + " is dealing with some insecurity issues right now.");
   		msg.delete();
-  	} else if(msg.channel.name == "mekabot"){
+  	} else if(msg.channel.id == "robots-in-disguise"){
   		// deletes msgs in mekabot that are not commands
-  		if (!msg.author.bot){
-  			msg.delete();
-  		}
+  		msg.delete();
   	} else{
     }
 });
